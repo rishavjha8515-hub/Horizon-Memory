@@ -61,6 +61,18 @@
                         complexCtx.arc(PointX, PointY, 5, 0, Math.PI * 2);
                         complexCtx.fillStyle = 'cyan';
                         complexCtx.fill();
+                        complexCtx.beginPath();
+                        complexCtx.moveTo(0,originY);
+                        complexCtx.lineTo(complexCanvas.width,originY);
+                        complexCtx.strokeStyle = "white";
+                        complexCtx.stroke();
+                        complexCtx.beginPath();
+                        complexCtx.moveTo(originX,0);
+                        complexCtx.lineTo(originX,complexCanvas.height);
+                        complexCtx.strokeStyle = "white";
+                        complexCtx.stroke();
+                        complexCtx.fillText("Real", complexCanvas.width - 26, originY - 5);
+                        complexCtx.fillText("Imaginary", originX + 7, 10);
                 }
                 //the graph will give you a deja vu
                 //Please note that there will be a approx 22-24% change in qubit shape,if you want to test it,you can take k=0 and k=1 and apply to the above formula
