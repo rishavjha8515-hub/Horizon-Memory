@@ -24,8 +24,10 @@
                 const collapsePopup = document.getElementById("collapsePopup");
 
                 let kappa = 0; // Please don't confuse kappa with electrical conductivity or L here
+                let phase = 0;
                 function draw() {
                     kappa = kappa + 0.050000;;
+                    phase = phase + 0.1;
                     kappaLabel.textContent = kappa.toFixed(6); //here toFixed(2) was suggested but i wemt with toFixed(6).Reason was when ,for example L constant from my paper 2.1895 × 10⁻⁴ is taken,we need min precision upto 6 values
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         const L = 2.1895e-4; // it is derived by me and still i am testing it mathematically,so please dont take it as the single universal correct value
@@ -43,7 +45,24 @@
                             collapsePopup.style.display = "block";
                             clearInterval(intervalId);
                         }
+
+                        complexCtx.clearRect(0, 0, complexCanvas.width, complexCanvas.height);
+
+                        const originX = complexCanvas.width / 2;
+                        const originY = complexCanvas.height / 2;
+                        const scale = complexCanvas.width / 2.5;
+
+                        const realPart = coherence * Math.cos(phase);
+                        const imagPart = coherence * Math.sin(phase);
+                        const PointX = originX + realPart * scale;
+                        const PointY = originY - imagPart * scale;
+
+                        complexCtx.beginPath();
+                        complexCtx.arc(PointX, PointY, 5, 0, Math.PI * 2);
+                        complexCtx.fillStyle = 'cyan';
+                        complexCtx.fill();
                 }
+                //the graph will give you a deja vu
                 //Please note that there will be a approx 22-24% change in qubit shape,if you want to test it,you can take k=0 and k=1 and apply to the above formula
                 draw();
                 slider.addEventListener("input", draw);
