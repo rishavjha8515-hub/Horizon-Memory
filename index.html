@@ -8,15 +8,24 @@
             <label>Surface gravity(K): <span id="kappaValue">0.500000</span></label>
             <canvas id="qubitCanvas" width="400" height="400" style="background : black;"></canvas>
                             <input type="range" id="kappaSlider" min="0" max="1" step="0.000001" value="0.5"></input>
+                            <canvas id="complexCanvas" width="324" height="324"style="background: maroon;"></canvas>
+                            <div id="collapsePopup" style="display: none; background: #1a1a1a; color: white; padding: 20px; border: 2px solid cyan; border-radius:8px; width: 300px; text-align: center; position: fixed; top: 40%; left: 40%;">
+                            <p id="collapseMessage">it has collapsed!</p>
+                            </div>
 
             <script>
                 const canvas = document.getElementById('qubitCanvas');
                 const ctx = canvas.getContext("2d");
                 const slider = document.getElementById("kappaSlider");
                 const kappaLabel = document.getElementById("kappaValue");
+                const intervalId = setInterval(draw, 2605); //sorry but i prefer my birthday over 1
+                const complexCanvas = document.getElementById("complexCanvas");
+                const complexCtx = complexCanvas.getContext("2d");
+                const collapsePopup = document.getElementById("collapsePopup");
 
+                let kappa = 0; // Please don't confuse kappa with electrical conductivity or L here
                 function draw() {
-                    const kappa = parseFloat(slider.value);
+                    kappa = kappa + 0.050000;;
                     kappaLabel.textContent = kappa.toFixed(6); //here toFixed(2) was suggested but i wemt with toFixed(6).Reason was when ,for example L constant from my paper 2.1895 × 10⁻⁴ is taken,we need min precision upto 6 values
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         const L = 2.1895e-4; // it is derived by me and still i am testing it mathematically,so please dont take it as the single universal correct value
@@ -29,7 +38,13 @@
                         ctx.arc(centerX, centerY, Math.max(radius, 2), 0, Math.PI * 2);
                         ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
                         ctx.fill();
+
+                        if (coherence <= 0) {
+                            collapsePopup.style.display = "block";
+                            clearInterval(intervalId);
+                        }
                 }
+                //Please note that there will be a approx 22-24% change in qubit shape,if you want to test it,you can take k=0 and k=1 and apply to the above formula
                 draw();
                 slider.addEventListener("input", draw);
             </script>
