@@ -12,6 +12,7 @@
                             <div id="collapsePopup" style="display: none; background: #1a1a1a; color: white; padding: 20px; border: 2px solid cyan; border-radius:8px; width: 300px; text-align: center; position: fixed; top: 40%; left: 40%;">
                             <p id="collapseMessage">it has collapsed!</p>
                             </div>
+                            <button id="measureButton">I want to measure it.</button>
 
             <script>
                 const canvas = document.getElementById('qubitCanvas');
@@ -22,11 +23,16 @@
                 const complexCanvas = document.getElementById("complexCanvas");
                 const complexCtx = complexCanvas.getContext("2d");
                 const collapsePopup = document.getElementById("collapsePopup");
+                const measureButton = document.getElementById("measureButton");
 
                 let kappa = 0; // Please don't confuse kappa with electrical conductivity or L here
                 let phase = 0;
+                let measurementMarkers = [];
+                let fallSpeed = 0.050000;
+                let maxCoherence = 1.000000;
+                let justMeasured = false;
                 function draw() {
-                    kappa = kappa + 0.050000;;
+                    kappa = kappa + fallSpeed;
                     phase = phase + 0.1;
                     kappaLabel.textContent = kappa.toFixed(6); //here toFixed(2) was suggested but i wemt with toFixed(6).Reason was when ,for example L constant from my paper 2.1895 × 10⁻⁴ is taken,we need min precision upto 6 values
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -34,7 +40,7 @@
                         const decoherenceRate = L * kappa; //here,L is a constant and k is surface gravity,not electrical conductivity
                         const centerX = canvas.width/2;
                         const centerY = canvas.height/2;
-                        const coherence = 1 - decoherenceRate * 1000;
+                        const coherence = maxCoherence - decoherenceRate * 1000;
                         const radius = coherence * (canvas.width/4);
                         ctx.beginPath();
                         ctx.arc(centerX, centerY, Math.max(radius, 2), 0, Math.PI * 2);
@@ -56,6 +62,10 @@
                         const imagPart = coherence * Math.sin(phase);
                         const PointX = originX + realPart * scale;
                         const PointY = originY - imagPart * scale;
+                        if (justMeasured) {
+                            measurementMarkers.push({x: PointX, y: PointY});
+                            justMeasured = false;
+                        }
 
                         complexCtx.beginPath();
                         complexCtx.arc(PointX, PointY, 5, 0, Math.PI * 2);
@@ -73,11 +83,28 @@
                         complexCtx.stroke();
                         complexCtx.fillText("Real", complexCanvas.width - 26, originY - 5);
                         complexCtx.fillText("Imaginary", originX + 7, 10);
-                }
+                        measurementMarkers.forEach(function(marker) {
+                        complexCtx.beginPath();
+                        complexCtx.arc(marker.x, marker.y, 8, 0, Math.PI * 2);
+                        complexCtx.strokeStyle = "lime";
+                        complexCtx.stroke();
+                        });
+                   }
+
                 //the graph will give you a deja vu
                 //Please note that there will be a approx 22-24% change in qubit shape,if you want to test it,you can take k=0 and k=1 and apply to the above formula
                 draw();
                 slider.addEventListener("input", draw);
+                function measure() {
+                    maxCoherence = maxCoherence - 0.050000;
+                    fallSpeed = Math.max(fallSpeed/2, 0.010000);
+                    justMeasured = true;
+                
+                    setTimeout(function() {
+                        fallSpeed = fallSpeed * 2;
+                    }, 2605);
+                }
+                measureButton.addEventListener("click", measure);
             </script>
         </body>
 </html>
