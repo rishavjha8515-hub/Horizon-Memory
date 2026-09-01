@@ -11,6 +11,7 @@
                             <canvas id="complexCanvas" width="324" height="324"style="background: maroon;"></canvas>
                             <div id="collapsePopup" style="display: none; background: #1a1a1a; color: white; padding: 20px; border: 2px solid cyan; border-radius:8px; width: 300px; text-align: center; position: fixed; top: 40%; left: 40%;">
                             <p id="collapseMessage">it has collapsed!</p>
+                            <button id="resetButton">Reset</button>
                             </div>
                             <button id="measureButton">I want to measure it.</button>
 
@@ -19,10 +20,11 @@
                 const ctx = canvas.getContext("2d");
                 const slider = document.getElementById("kappaSlider");
                 const kappaLabel = document.getElementById("kappaValue");
-                const intervalId = setInterval(draw, 2605); //sorry but i prefer my birthday over 1
+                let intervalId = setInterval(draw, 2605); //sorry but i prefer my birthday over 1
                 const complexCanvas = document.getElementById("complexCanvas");
                 const complexCtx = complexCanvas.getContext("2d");
                 const collapsePopup = document.getElementById("collapsePopup");
+                const resetButton = document.getElementById("resetButton");
                 const measureButton = document.getElementById("measureButton");
 
                 let kappa = 0; // Please don't confuse kappa with electrical conductivity or L here
@@ -90,6 +92,17 @@
                         complexCtx.stroke();
                         });
                    }
+
+                   function reset() {
+                    kappa = 0;
+                    phase = 0;
+                    fallSpeed = 0.050000;
+                    maxCoherence = 1.000000;
+                    measurementMarkers = [];
+                    collapsePopup.style.display = "none";
+                    intervalId = setInterval(draw, 2605);
+                   }
+                   resetButton.addEventListener("click", reset);
 
                 //the graph will give you a deja vu
                 //Please note that there will be a approx 22-24% change in qubit shape,if you want to test it,you can take k=0 and k=1 and apply to the above formula
