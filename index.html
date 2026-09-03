@@ -27,15 +27,21 @@
                 const resetButton = document.getElementById("resetButton");
                 const measureButton = document.getElementById("measureButton");
 
-                let kappa = 0; // Please don't confuse kappa with electrical conductivity or L here
+                const M = 1;
+                let Q = 0;
                 let phase = 0;
                 let measurementMarkers = [];
                 let fallSpeed = 0.050000;
                 let maxCoherence = 1.000000;
                 let justMeasured = false;
                 function draw() {
-                    kappa = kappa + fallSpeed;
+                    Q = Math.min(Q + fallSpeed, 0.999999); #
+                    //The code can break here 
                     phase = phase + 0.1;
+                    const sqrtTerm = Math.sqrt(M*M - Q*Q);
+                    const rPlus = M + sqrtTerm;
+                    const rMinus = M - sqrtTerm;
+                    const kappa = (rPlus - rMinus) / (2 * rPlus * rPlus);
                     kappaLabel.textContent = kappa.toFixed(6); //here toFixed(2) was suggested but i wemt with toFixed(6).Reason was when ,for example L constant from my paper 2.1895 × 10⁻⁴ is taken,we need min precision upto 6 values
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         const L = 2.1895e-4; // it is derived by me and still i am testing it mathematically,so please dont take it as the single universal correct value
@@ -94,7 +100,7 @@
                    }
 
                    function reset() {
-                    kappa = 0;
+                    Q = 0;
                     phase = 0;
                     fallSpeed = 0.050000;
                     maxCoherence = 1.000000;
